@@ -1,0 +1,78 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Yash Balan</title>
+</head>
+<body style="margin: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <!-- Header -->
+    <header style="background-color: #2e7d32; color: white; text-align: center; padding: 2rem;">
+        <h1 style="margin: 0; font-size: 2.5rem;">Yash Balan</h1>
+        <p style="margin: 0.5rem 0;">Computer Science & Economics Student | Innovator in Sustainability</p>
+        <a href="https://www.linkedin.com/in/yash-balan" target="_blank" style="color: #a5d6a7; text-decoration: none; font-weight: bold;">LinkedIn Profile</a>
+    </header>
+
+    <!-- Navigation -->
+    <nav style="background-color: #f5f5f5; padding: 1rem; text-align: center;">
+        <a href="index.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">Home</a>
+        <a href="about.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">About</a> <a href="learnings.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">Learnings</a>
+        <a href="contact.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">Contact</a>
+    </nav>
+
+    <!-- About Section -->
+    <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+        <section>
+            <h2 style="color: #2e7d32;">About Me</h2>
+            <p>I’m Yash Balan, a student pursuing a B.Tech in Computer Science and Economics at Sai University, Chennai (GPA: 8.9), and a B.Sc in Data Science at IIT Madras (GPA: 8.26). My passion lies at the intersection of technology and sustainability, where I strive to create innovative solutions for a greener future.</p>
+            <p>From developing Net Zero Emission Homes with Viridian to leading corporate relations at E-Cell IIT Madras, I’ve worked on projects that blend technical expertise with real-world impact. My internships at Blenheim Chalcot and Hopcharge honed my skills in ESG strategy, machine learning, and software development, achieving results like a 25% increase in user engagement and 18% cost reductions.</p>
+            <p>Currently, I’m researching sustainable economics, exploring natural capital valuation and behavioral nudges for clean energy adoption. I’m also an active community builder, curating cultural programs at Hostel Mantra and fostering startup ecosystems at IIT Madras.</p>
+            <p>My goal is to drive systemic change through technology and economics, creating solutions that are both sustainable and scalable.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: #2e7d32; color: white; text-align: center; padding: 1rem;">
+        <p>&copy; 2025 Yash Balan. All rights reserved.</p>
+    </footer>
+</body>
+</html>

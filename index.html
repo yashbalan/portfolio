@@ -1,0 +1,115 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yash Balan - Portfolio</title>
+</head>
+<body style="margin: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <!-- Header -->
+    <header style="background-color: #2e7d32; color: white; text-align: center; padding: 2rem;">
+        <h1 style="margin: 0; font-size: 2.5rem;">Yash Balan</h1>
+        <p style="margin: 0.5rem 0;">Computer Science & Economics Student | Sustainability Innovator</p>
+        <a href="https://www.linkedin.com/in/yash-balan-780a34150/" target="_blank" style="color: #a5d6a7; text-decoration: none; font-weight: bold;">LinkedIn Profile</a>
+    </header>
+
+    <!-- Navigation -->
+    <nav style="background-color: #f5f5f5; padding: 1rem; text-align: center;">
+        <a href="index.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">Home</a>
+        <a href="about.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">About</a>
+        <a href="learnings.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">Learnings</a>
+        <a href="contact.html" style="margin: 0 1rem; text-decoration: none; color: #2e7d32; font-weight: bold;">Contact</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+        <!-- Skills -->
+        <section style="margin-bottom: 2rem;">
+            <h2 style="color: #2e7d32;">Skills</h2>
+            <ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem;">
+                <li style="background-color: #e8f5e9; padding: 0.5rem 1rem; border-radius: 5px;">Python (Pandas, StatsModels)</li>
+                <li style="background-color: #e8f5e9; padding: 0.5rem 1rem; border-radius: 5px;">Machine Learning</li>
+                <li style="background-color: #e8f5e9; padding: 0.5rem 1rem; border-radius: 5px;">GIS & Spatial Analysis</li>
+                <li style="background-color: #e8f5e9; padding: 0.5rem 1rem; border-radius: 5px;">ESG Strategy</li>
+                <li style="background-color: #e8f5e9; padding: 0.5rem 1rem; border-radius: 5px;">C++ (OOP, STL)</li>
+                <li style="background-color: #e8f5e9; padding: 0.5rem 1rem; border-radius: 5px;">Leadership & Innovation</li>
+            </ul>
+        </section>
+
+        <!-- Work Experience -->
+        <section style="margin-bottom: 2rem;">
+            <h2 style="color: #2e7d32;">Work Experience</h2>
+            <h3>Blenheim Chalcot - Summer Associate (Jun 2024 - Aug 2024)</h3>
+            <p>I dove into the world of transformative sustainability, crafting strategies that aligned client operations with ESG goals, optimized supply chains with cutting-edge analytics, and delivered electrifying executive presentations that shaped long-term green initiatives!</p>
+            <h3>Hopcharge - Software Engineering Intern (Jun 2023 - Aug 2023)</h3>
+            <p>At Hopcharge, I unleashed my creativity, designing user-friendly admin panels that boosted satisfaction by 20%, engineered a thrilling forecasting system with <2% error for EV charging, and built a recommendation engine that ignited a 25% surge in daily users!</p>
+        </section>
+
+        <!-- Projects -->
+        <section style="margin-bottom: 2rem;">
+            <h2 style="color: #2e7d32;">Projects</h2>
+            <h3>Viridian: Sustainable Homes by Design</h3>
+            <p>This exhilarating venture crafts Net Zero Emission Homes, blending architectural brilliance with eco-conscious design, and shone brightly at Accenture’s Solve the SDGs Hackathon as a beacon of sustainable living!</p>
+            <h3>GIVVY Tech</h3>
+            <p>An exciting AI-powered platform, GIVVY Tech connects unused items to local needs in real-time, earning a spotlight at GDSC National Hackathon 2023 with its innovative donation model!</p>
+            <h3>PortEV - EV Charging Infrastructure</h3>
+            <p>PortEV revolutionizes EV charging with a sustainable app and renewable-powered stations, captivating audiences at IIT Tech Symposium & E-Summit 2024 with its eco-friendly vision!</p>
+        </section>
+
+        <!-- Achievements -->
+        <section style="margin-bottom: 2rem;">
+            <h2 style="color: #2e7d32;">Achievements</h2>
+            <ul style="padding-left: 1rem;">
+                <li>Runner-Up, Accenture’s Solve the SDGs Hackathon (2024) for Viridian’s groundbreaking sustainable housing!</li>
+                <li>International Innovation Award (2020), ranking 3rd among 15,000+ for an affordable AI sanitizing machine!</li>
+                <li>Best Young Entrepreneur Award (2021) by Think Startup & MEPSC for my bold vision!</li>
+                <li>Finalist, Smart India Hackathon, Hack-CBS, Hack-Zurich (2023) with stellar performances!</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: #2e7d32; color: white; text-align: center; padding: 1rem;">
+        <p>© 2025 Yash Balan. All rights reserved.</p>
+    </footer>
+</body>
+</html>
